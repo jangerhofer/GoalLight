@@ -1,0 +1,24 @@
+{
+  "name": "GoalLight",
+  "version": "1.0.0",
+  "description": "NHL goal alert system.",
+  "main": "app.js",
+  "dependencies": {
+    "player": "^0.1.8",
+    "request": "^2.48.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://jangerho@github.com/jangerho/GoalLight.git"
+  },
+  "author": "JD Angerhofer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jangerho/GoalLight/issues"
+  },
+  "homepage": "https://github.com/jangerho/GoalLight"
+}
