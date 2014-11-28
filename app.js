@@ -1,16 +1,20 @@
 var request = require('request');
 var Player = require('player');
-var dateString = new Date().getFullYear() + "-" + (new Date().getMonth() + 1) +
-"-" + (new Date().getDate())
-var queryString = "http://localhost:8888/test.jsonp"
+var player = new Player();
+var dateString = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) +
+'-' + (new Date().getDate())
+var queryString = 'http://localhost:8888/test.jsonp'
 //'http://live.nhle.com/GameData/GCScoreboard/' + dateString + '.jsonp'
 var scoreDB = {};
 //  Deal with missing music files.
 process.on('uncaughtException', function(err) {
-  playHorn("Default");
+  playHorn('Default');
 })
 
 function playHorn(teamAbbreviation) {
+  if (player) {
+    player.stop();
+  }
   player = new Player('goalHorns/' + teamAbbreviation + '.mp3');
   player.play();
 }
@@ -42,16 +46,24 @@ function initialLoad() {
         for (i = 0; i < results.length; i++) {
           if (results[i].ats != scoreDB[results[i].ata] &&
             results[i].ats != 0) {
-              console.log(new Date() + ".  Goal scored by: " +
-              results[i].ata + ".  " + results[i].ata + " " + results[i].ats + " -- " + results[i].hta + " " + results[i].hts + '.');
+              console.log(new Date() + '.  Goal scored by: ' +
+              results[i].ata + '.  ' + results[i].ata +
+              ' ' + results[i].ats + ' -- ' + results[i].hta +
+              ' ' + results[i].hts + '.');
+              //  Play audio alert
               playHorn(results[i].ata);
+              //  Update known scores
               scoreDB[results[i].ata] = results[i].ats;
             }
             if (results[i].hts != scoreDB[results[i].hta] &&
               results[i].hts != 0) {
-                console.log(new Date() + ".  Goal scored by: " +
-                results[i].hta + ".  " + results[i].ata + " " + results[i].ats + " -- " + results[i].hta + " " + results[i].hts + '.');
+                console.log(new Date() + '.  Goal scored by: ' +
+                results[i].hta + '.  ' + results[i].ata +
+                ' ' + results[i].ats + ' -- ' + results[i].hta +
+                ' ' + results[i].hts + '.');
+                //  Play audio alert
                 playHorn(results[i].hta);
+                //  Update known scores
                 scoreDB[results[i].hta] = results[i].hts;
               }
             }
