@@ -1,7 +1,10 @@
+process.stdin.resume();
+var util = require('util');
 var request = require('request');
 var Player = require('player');
 var player = new Player();
-var queryString = 'http://live.nhle.com/GameData/GCScoreboard/' + new Date().getFullYear() + '-' + (new Date().getMonth() + 1) +
+var queryString = 'http://localhost:8888/test.jsonp'
+//var queryString = 'http://live.nhle.com/GameData/GCScoreboard/' + new Date().getFullYear() + '-' + (new Date().getMonth() + 1) +
 '-' + (("0" + new Date().getDate()).slice(-2)) + '.jsonp'
 var scoreDB = {};
 console.log(queryString);
@@ -21,18 +24,19 @@ function playHorn(teamAbbreviation) {
 }
 
 function initialLoad() {
-    request(queryString, function(error, response, body) {
-      var jsonObject = body
-      results = body.split('(')[1]
-      results = JSON.parse(results.substring(0, results.length -
-        2)).games;
-        for (i = 0; i < results.length; i++) {
-          scoreDB[results[i].ata] = results[i].ats;
-          scoreDB[results[i].hta] = results[i].hts;
-        }
-      });
-      runtime();
-    }
+  request(queryString, function(error, response, body) {
+    var jsonObject = body
+    results = body.split('(')[1]
+    results = JSON.parse(results.substring(0, results.length -
+      2)).games;
+      for (i = 0; i < results.length; i++) {
+        scoreDB[results[i].ata] = results[i].ats;
+        scoreDB[results[i].hta] = results[i].hts;
+        scoreDB[results[i].bs] = results[i].bs;
+      }
+    });
+    runtime();
+  }
 
 
   function updateScores(callback) {
@@ -48,7 +52,7 @@ function initialLoad() {
               console.log(new Date() + '.  Goal scored by: ' +
               results[i].ata + '.  ' + results[i].ata +
               ' ' + results[i].ats + ' -- ' + results[i].hta +
-              ' ' + results[i].hts + ' at '  + results[i].bs + '.');
+              ' ' + results[i].hts + ' at ' + results[i].bs + '.');
               //  Play audio alert.
               playHorn(results[i].ata);
               //  Update known scores.
@@ -65,6 +69,14 @@ function initialLoad() {
                 //  Update known scores.
                 scoreDB[results[i].hta] = results[i].hts;
               }
+              //  Check for period-change
+              if (results[i].bs != scoreDB[results[i].bs]) {
+                console.log(new Date() + '  Period change: ' + results[i].bs + ".  " + results[i].ata + ' -- ' + results[i].hta + '.');
+                //  Play audio alert.
+                playHorn("EOP");
+                //  Update known scores.
+                scoreDB[results[i].bs] = results[i].bs;
+              }
             }
           });
           //  Re-run loop.
@@ -78,3 +90,8 @@ function initialLoad() {
         }
         // Load in initial data for the day.
         initialLoad();
+        process.stdin.on('data', function(text) {
+          if (player && text === '\n') {
+            player.stop();
+          }
+        });
