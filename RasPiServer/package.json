@@ -1,0 +1,14 @@
+{
+  "name": "goalLightServer",
+  "version": "1.0.0",
+  "description": "Node server for light-triggering.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "JD Angerhofer",
+  "license": "ISC",
+  "dependencies": {
+    "omx-manager": "0.0.3"
+  }
+}
